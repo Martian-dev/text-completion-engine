@@ -14,3 +14,49 @@ to get the completion we hit the endpoint `localhost:5000/complete`
 ```bash
 curl -X POST http://localhost:5000/complete -H "Content-Type: application/json" -d '{"text": "<the text you want completion for>"}'
 ```
+
+memory and cpu usage metrics:
+
+```
+=== System Metrics ===
+Total RAM (rss): 442.56 MB
+FAISS Index Size: 0.08 MB
+Metadata Size: 0.03 MB
+Embedding Model Size: 0.00 MB
+=======================
+
+=== System Metrics ===
+Total RAM (rss): 435.82 MB
+FAISS Index Size: 0.08 MB
+Metadata Size: 0.03 MB
+Embedding Model Size: 0.00 MB
+=======================
+
+=== System Metrics ===
+Total RAM (rss): 435.88 MB
+FAISS Index Size: 0.08 MB
+Metadata Size: 0.03 MB
+Embedding Model Size: 0.00 MB
+=======================
+
+=== System Metrics ===
+Total RAM (rss): 442.61 MB
+FAISS Index Size: 0.08 MB
+Metadata Size: 0.03 MB
+Embedding Model Size: 0.00 MB
+=======================
+
+=== System Metrics ===
+Total RAM (rss): 437.91 MB
+FAISS Index Size: 0.08 MB
+Metadata Size: 0.03 MB
+Embedding Model Size: 0.00 MB
+=======================
+
+=== System Metrics ===
+Total RAM (rss): 441.18 MB
+FAISS Index Size: 0.08 MB
+Metadata Size: 0.03 MB
+Embedding Model Size: 0.00 MB
+=======================
+```

@@ -7,6 +7,11 @@ import os
 import json
 import google.generativeai as genai
 
+# metrics
+import psutil
+import sys
+import pathlib
+
 app = Flask(__name__)
 
 # loading required environment variables
@@ -44,6 +49,50 @@ def chunk_text(text, max_len=300):
     return [text[i : i + max_len] for i in range(0, len(text), max_len)]
 
 
+# Util: metrics
+def get_deep_size(obj, seen=None):
+    size = sys.getsizeof(obj)
+    if seen is None:
+        seen = set()
+    obj_id = id(obj)
+    if obj_id in seen:
+        return 0
+    seen.add(obj_id)
+    if isinstance(obj, dict):
+        size += sum(
+            [get_deep_size(k, seen) + get_deep_size(v, seen) for k, v in obj.items()]
+        )
+    elif hasattr(obj, "__dict__"):
+        size += get_deep_size(vars(obj), seen)
+    elif isinstance(obj, (list, tuple, set)):
+        size += sum(get_deep_size(i, seen) for i in obj)
+    return size
+
+
+def get_folder_size(path):
+    total = 0
+    for file in pathlib.Path(path).rglob("*"):
+        if file.is_file():
+            total += file.stat().st_size
+    return total
+
+
+def log_system_metrics():
+    process = psutil.Process(os.getpid())
+    total_rss = process.memory_info().rss
+    metadata_size = get_deep_size(metadata)
+    embedding_model_size = get_folder_size(MODEL_NAME)
+    faiss_size = index.ntotal * index.d * 4  # float32 = 4 bytes
+
+    with open("metrics.log", "a") as f:
+        f.write("=== System Metrics ===\n")
+        f.write(f"Total RAM (rss): {total_rss / (1024**2):.2f} MB\n")
+        f.write(f"FAISS Index Size: {faiss_size / (1024**2):.2f} MB\n")
+        f.write(f"Metadata Size: {metadata_size / (1024**2):.2f} MB\n")
+        f.write(f"Embedding Model Size: {embedding_model_size / (1024**2):.2f} MB\n")
+        f.write("=======================\n\n")
+
+
 # Step 1: Prepare documents and embed
 
 
@@ -61,28 +110,30 @@ def prepare_documents():
             metadata = json.load(f)
         index = faiss.IndexFlatL2(embeddings.shape[1])
         index.add(embeddings)
-        return
 
-    print("Reading and embedding documents...")
-    all_chunks = []
-    metadata = []
+    else:
+        print("Reading and embedding documents...")
+        all_chunks = []
+        metadata = []
 
-    for path in Path(DOCS_PATH).rglob("*.txt"):
-        text = path.read_text(encoding="utf-8", errors="ignore")
-        chunks = chunk_text(text, CHUNK_SIZE)
-        all_chunks.extend(chunks)
-        metadata.extend([{"file": str(path), "text": chunk} for chunk in chunks])
+        for path in Path(DOCS_PATH).rglob("*.txt"):
+            text = path.read_text(encoding="utf-8", errors="ignore")
+            chunks = chunk_text(text, CHUNK_SIZE)
+            all_chunks.extend(chunks)
+            metadata.extend([{"file": str(path), "text": chunk} for chunk in chunks])
 
-    embeddings = model.encode(all_chunks)
-    print("Embeddings shape:", embeddings.shape)  # Add this line to debug
+        embeddings = model.encode(all_chunks)
+        print("Embeddings shape:", embeddings.shape)  # Add this line to debug
 
-    np.save(EMBEDDINGS_FILE, embeddings)
-    with open(METADATA_FILE, "w") as f:
-        json.dump(metadata, f)
+        np.save(EMBEDDINGS_FILE, embeddings)
+        with open(METADATA_FILE, "w") as f:
+            json.dump(metadata, f)
 
-    index = faiss.IndexFlatL2(embeddings.shape[1])
-    index.add(embeddings)
-    print("Index built.")
+        index = faiss.IndexFlatL2(embeddings.shape[1])
+        index.add(embeddings)
+        print("Index built.")
+
+    log_system_metrics()
 
 
 # Step 2: Search and complete using Ollama
