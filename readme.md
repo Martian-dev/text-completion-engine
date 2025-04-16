@@ -19,42 +19,54 @@ memory and cpu usage metrics:
 
 ```
 === System Metrics ===
-Total RAM (rss): 442.56 MB
+Timestamp: 2025-04-16 21:46:16
+Total RAM (rss): 442.49 MB
+CPU Usage: 0.00%
 FAISS Index Size: 0.08 MB
 Metadata Size: 0.03 MB
 Embedding Model Size: 0.00 MB
 =======================
 
 === System Metrics ===
-Total RAM (rss): 435.82 MB
+Timestamp: 2025-04-16 21:46:33
+Total RAM (rss): 441.74 MB
+CPU Usage: 0.00%
 FAISS Index Size: 0.08 MB
 Metadata Size: 0.03 MB
 Embedding Model Size: 0.00 MB
 =======================
 
 === System Metrics ===
-Total RAM (rss): 435.88 MB
+Timestamp: 2025-04-16 21:55:21
+Total RAM (rss): 442.47 MB
+CPU Usage: 0.00%
 FAISS Index Size: 0.08 MB
 Metadata Size: 0.03 MB
 Embedding Model Size: 0.00 MB
 =======================
 
 === System Metrics ===
-Total RAM (rss): 442.61 MB
+Timestamp: 2025-04-16 21:56:18
+Total RAM (rss): 498.39 MB
+CPU Usage: 7.00%
 FAISS Index Size: 0.08 MB
 Metadata Size: 0.03 MB
 Embedding Model Size: 0.00 MB
 =======================
 
 === System Metrics ===
-Total RAM (rss): 437.91 MB
+Timestamp: 2025-04-16 21:56:30
+Total RAM (rss): 501.70 MB
+CPU Usage: 13.00%
 FAISS Index Size: 0.08 MB
 Metadata Size: 0.03 MB
 Embedding Model Size: 0.00 MB
 =======================
 
 === System Metrics ===
-Total RAM (rss): 441.18 MB
+Timestamp: 2025-04-16 21:56:42
+Total RAM (rss): 501.70 MB
+CPU Usage: 7.00%
 FAISS Index Size: 0.08 MB
 Metadata Size: 0.03 MB
 Embedding Model Size: 0.00 MB

@@ -11,6 +11,7 @@ import google.generativeai as genai
 import psutil
 import sys
 import pathlib
+import time
 
 app = Flask(__name__)
 
@@ -80,13 +81,16 @@ def get_folder_size(path):
 def log_system_metrics():
     process = psutil.Process(os.getpid())
     total_rss = process.memory_info().rss
+    cpu_percent = process.cpu_percent(interval=1)
     metadata_size = get_deep_size(metadata)
     embedding_model_size = get_folder_size(MODEL_NAME)
     faiss_size = index.ntotal * index.d * 4  # float32 = 4 bytes
 
     with open("metrics.log", "a") as f:
         f.write("=== System Metrics ===\n")
+        f.write(f"Timestamp: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"Total RAM (rss): {total_rss / (1024**2):.2f} MB\n")
+        f.write(f"CPU Usage: {cpu_percent:.2f}%\n")
         f.write(f"FAISS Index Size: {faiss_size / (1024**2):.2f} MB\n")
         f.write(f"Metadata Size: {metadata_size / (1024**2):.2f} MB\n")
         f.write(f"Embedding Model Size: {embedding_model_size / (1024**2):.2f} MB\n")
@@ -180,6 +184,8 @@ def complete():
     )
 
     completion = query_gemini(prompt)
+
+    log_system_metrics()
 
     return jsonify({"completion": completion})
 
