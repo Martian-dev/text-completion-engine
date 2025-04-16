@@ -5,6 +5,12 @@
 - make sure to create a virtual environment, activate it and install all the required packages given in the `requirements.txt` file.
 - now you can execute the following command to run the program
 
-```bashrc
+```bash
 python src/main.py
+```
+
+to get the completion we hit the endpoint `localhost:5000/complete`
+
+```bash
+curl -X POST http://localhost:5000/complete -H "Content-Type: application/json" -d '{"text": "<the text you want completion for>"}'
 ```

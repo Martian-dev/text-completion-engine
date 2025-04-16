@@ -112,11 +112,22 @@ def complete():
     D, I = index.search(np.array(query_embedding), k=3)
     top_chunks = [metadata[i]["text"] for i in I[0]]
 
+    # prompt = (
+    #     f"User typed: {query}...\nRelevant Info:\n- "
+    #     + "\n- ".join(top_chunks)
+    #     + "\n\nInstructions: Continue the user's sentence (User typed) in 15 words or less based on the Relevant Info provided. if the user's sentence (User typed) has an incomplete word at the end complete that word as well and continue your completion. give only the completed sentence, that too from the exact place the user ended.\n"
+    # )
     prompt = (
-        f"User typed: {query}\nRelevant Info:\n- "
-        + "\n- ".join(top_chunks)
-        + "\n\ncontinue the user's sentence (User typed) in 15 words or less based on the Relevant Info provided. if the user's sentence (User typed) has an incomplete word at the end complete that word as well and continue your completion.\n"
+        f"You are an intelligent writing assistant.\n\n"
+        f"User typed:\n{query}\n\n"
+        f"Relevant Context:\n" + "\n- ".join(top_chunks) + "\n\n"
+        "Instructions:\n"
+        "1. Continue the user's input **from exactly where it ends**.\n"
+        "2. If the last word is incomplete, complete it naturally before continuing.\n"
+        "3. Keep the total completion to **15 words or fewer**.\n"
+        "4. Only return the completed sentence—**no extra commentary or explanations**.\n"
     )
+
     completion = query_gemini(prompt)
 
     return jsonify({"completion": completion})
